@@ -12,7 +12,8 @@
 
 
   <modules>
-    <module>gateway</module>
+    <module>gateway-service</module>
+    <module>user-center</module>
   </modules>
 
   <name>polo</name>
@@ -25,8 +26,7 @@
      <!--cloud boot alibaba -version-->
     <spring.cloud.version>Hoxton.SR3</spring.cloud.version>
     <spring.boot.version>2.2.5.RELEASE</spring.boot.version>
-    <spring.cloud.alibaba.version>2.2.6.RELEASE</spring.cloud.alibaba.version>
-
+    <spring.cloud.alibaba.version>2.2.1.RELEASE</spring.cloud.alibaba.version>
 
     <!--spring cloud alibaba-->
     <alibaba.sentinel.version>1.7.1</alibaba.sentinel.version>
@@ -34,6 +34,8 @@
     <alibaba.rabbitmq.version>4.4.0</alibaba.rabbitmq.version>
     <alibaba.dubbo.version>2.7.6</alibaba.dubbo.version>
     <alibaba.seata.version>1.2.0</alibaba.seata.version>
+
+    <jdk.version>1.8</jdk.version>
 
     <lombok.version>1.16.18</lombok.version>
     <mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
@@ -98,13 +100,25 @@
   </dependencyManagement>
 
 
+  <repositories>
 
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+  </repositories>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>2.1.15.RELEASE</version>
         <configuration>
           <fork>true</fork>
           <addResources>true</addResources>

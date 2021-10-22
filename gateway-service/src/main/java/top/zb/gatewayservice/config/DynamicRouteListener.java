@@ -1,5 +1,7 @@
 package top.zb.gatewayservice.config;
 
+import com.alibaba.nacos.api.NacosFactory;
+import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
@@ -14,10 +16,12 @@ import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import top.zb.gatewayservice.util.JsonUtils;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 
 /**
@@ -27,9 +31,9 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
+@Component
 public class DynamicRouteListener {
 
-    @Autowired
     ConfigService configService;
 
     @Autowired
@@ -41,12 +45,12 @@ public class DynamicRouteListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void createListener(){
-        if (configService == null){
+        if ((configService =initConfigService()) == null){
             log.error("【configService】为空");
             return;
         }
         try {
-            //通过configService使用配置id和group以及监听器拿到上下文
+            //通过configService使用配置id和group拿到路由文本以及编写监听器事件
             String route =configService.getConfigAndSignListener(GatewayConfig.GATEWAY_CONFIG_DATA_ID,GatewayConfig.GATEWAY_CONFIG_GROUP,10000, new Listener() {
                 @Override
                 public Executor getExecutor() {
@@ -64,6 +68,7 @@ public class DynamicRouteListener {
                     });
                 }
             });
+            log.info("现有路由：{}",route);
             //拿到目前的路由并发布
             JsonUtils.toList(route,RouteDefinition.class).forEach( f ->{
                 updateDefinition(f);
@@ -81,10 +86,26 @@ public class DynamicRouteListener {
         }
         //保存并发布新路由
         try {
-            routeDefinitionWriter.save((Mono<RouteDefinition>) Mono.just(routeDefinition).subscribe());
+            routeDefinitionWriter.save(Mono.just(routeDefinition)).subscribe();
             this.applicationEventPublisher.publishEvent(new RefreshRoutesEvent(this));
         } catch (Exception e) {
             log.error("发布路由失败");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化configService
+     * @return
+     */
+    private ConfigService initConfigService(){
+        Properties properties = new Properties();
+        properties.setProperty(PropertyKeyConst.SERVER_ADDR,GatewayConfig.NACOS_SERVER_ADDR);
+        try {
+            return NacosFactory.createConfigService(properties);
+        } catch (NacosException e){
+            log.error("【ConfigService】初始化失败");
+            return null;
         }
     }
 

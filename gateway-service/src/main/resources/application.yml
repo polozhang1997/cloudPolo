@@ -1,7 +1,8 @@
 polo:
   nacos:
-    whiteApiName : "whiteApi"
-    whiteIpName : "whiteIp"
+    white :
+      dataId: "gateway-service-white"
+      group: "DEFAULT_GROUP"
   gateway:
     dateId: "gateway-service-route"
     group: "DEFAULT_GROUP"

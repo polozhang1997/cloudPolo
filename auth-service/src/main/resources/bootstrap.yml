@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: auth-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.165.12.109:8848
+        enabled: true
+      config:
+        file-extension: yaml
+        server-addr: 10.165.12.109:8848
+server:
+  port: 6002

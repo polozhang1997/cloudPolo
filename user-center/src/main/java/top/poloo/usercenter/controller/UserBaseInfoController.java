@@ -11,7 +11,7 @@ import top.poloo.usercenter.service.UserBaseInfoService;
  * @Date: 2021/10/21 16:42
  */
 @RestController
-@RequestMapping(value = "userBaseInfo")
+@RequestMapping(value = "api/userBaseInfo")
 public class UserBaseInfoController {
     @Autowired
     UserBaseInfoService baseInfoService;

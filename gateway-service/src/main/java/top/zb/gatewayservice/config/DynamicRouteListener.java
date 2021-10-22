@@ -5,12 +5,10 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import javafx.application.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.cloud.endpoint.event.RefreshEvent;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
@@ -19,7 +17,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import top.zb.gatewayservice.util.JsonUtils;
-
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -29,11 +26,20 @@ import java.util.concurrent.Executor;
  * @Author: polo
  * @Date: 2021/10/22 9:40
  */
+
+/**
+ * 动态路由：
+ * 1.初始化ConfigService（当然也可以创建一个配置类然后再自动注入）
+ * 2.通过初始化configService.getConfigAndSignListener(id,group,timeout,listener)拿到当前配置和监听器（@EventListener(ApplicationReadyEvent.class(事件源.class))）
+ * 2.1。监听器监听nacos配置，并转化为RouteDefinition，并更新发布
+ * 3.拿到当前当前文本路由进行发布更新
+ */
 @Slf4j
 @ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
 @Component
 public class DynamicRouteListener {
 
+    @Autowired
     ConfigService configService;
 
     @Autowired
@@ -45,13 +51,13 @@ public class DynamicRouteListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void createListener(){
-        if ((configService =initConfigService()) == null){
+        if ((configService ) == null){
             log.error("【configService】为空");
             return;
         }
         try {
             //通过configService使用配置id和group拿到路由文本以及编写监听器事件
-            String route =configService.getConfigAndSignListener(GatewayConfig.GATEWAY_CONFIG_DATA_ID,GatewayConfig.GATEWAY_CONFIG_GROUP,10000, new Listener() {
+            String route =configService.getConfigAndSignListener(DynamicGatewayConfig.GATEWAY_CONFIG_DATA_ID,DynamicGatewayConfig.GATEWAY_CONFIG_GROUP,10000, new Listener() {
                 @Override
                 public Executor getExecutor() {
                     return null;
@@ -74,7 +80,7 @@ public class DynamicRouteListener {
                 updateDefinition(f);
             });
         } catch (NacosException e) {
-            e.printStackTrace();
+            log.warn("请在nacos编写dataId为：{}，group为：{}的相关配置文件",DynamicGatewayConfig.GATEWAY_CONFIG_DATA_ID,DynamicGatewayConfig.GATEWAY_CONFIG_GROUP);
         }
     }
     private void updateDefinition(RouteDefinition routeDefinition){
@@ -94,19 +100,6 @@ public class DynamicRouteListener {
         }
     }
 
-    /**
-     * 初始化configService
-     * @return
-     */
-    private ConfigService initConfigService(){
-        Properties properties = new Properties();
-        properties.setProperty(PropertyKeyConst.SERVER_ADDR,GatewayConfig.NACOS_SERVER_ADDR);
-        try {
-            return NacosFactory.createConfigService(properties);
-        } catch (NacosException e){
-            log.error("【ConfigService】初始化失败");
-            return null;
-        }
-    }
+
 
 }

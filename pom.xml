@@ -14,6 +14,8 @@
   <modules>
     <module>gateway-service</module>
     <module>user-center</module>
+    <module>auth-service</module>
+
   </modules>
 
   <name>polo</name>
@@ -31,6 +33,8 @@
     <!--spring cloud alibaba-->
     <alibaba.sentinel.version>1.7.1</alibaba.sentinel.version>
     <alibaba.nacos.version>1.2.1</alibaba.nacos.version>
+    <alibaba.nacos.config>2.2.4.RELEASE</alibaba.nacos.config>
+    <alibaba.nacos.discovery>2.2.4.RELEASE</alibaba.nacos.discovery>
     <alibaba.rabbitmq.version>4.4.0</alibaba.rabbitmq.version>
     <alibaba.dubbo.version>2.7.6</alibaba.dubbo.version>
     <alibaba.seata.version>1.2.0</alibaba.seata.version>
@@ -39,6 +43,8 @@
 
     <lombok.version>1.16.18</lombok.version>
     <mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
+    <fastjson.version>1.2.78</fastjson.version>
+    <hutool.version>5.7.15</hutool.version>
 
     <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
     <maven.compiler.source>8</maven.compiler.source>
@@ -53,7 +59,6 @@
     <druid.version>1.1.16</druid.version>
     <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
 
-    <hutool-all.version>5.1.0</hutool-all.version>
   </properties>
 
   <dependencyManagement>
@@ -95,6 +100,31 @@
         <artifactId>mybatis-spring-boot-starter</artifactId>
         <version>${mybatis-spring-boot-starter.version}</version>
       </dependency>
+        <!--nacos注册配置-->
+        <dependency>
+          <groupId>com.alibaba.cloud</groupId>
+          <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+          <version>${alibaba.nacos.config}</version>
+        </dependency>
+        <!--nacos注册发现-->
+        <dependency>
+          <groupId>com.alibaba.cloud</groupId>
+          <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+          <version>${alibaba.nacos.discovery}</version>
+        </dependency>
+        <!--fastjson-->
+        <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>fastjson</artifactId>
+          <version>${fastjson.version}</version>
+        </dependency>
+        <!--hutool-->
+        <dependency>
+          <groupId>cn.hutool</groupId>
+          <artifactId>hutool-all</artifactId>
+          <version>${hutool.version}</version>
+        </dependency>
+
     </dependencies>
 
   </dependencyManagement>

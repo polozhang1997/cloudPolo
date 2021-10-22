@@ -6,7 +6,7 @@ spring:
       discovery:
         locator:
           lower-case-service-id: true   #忽略服务大小写
-          enabled: true             #动态创建路由
+          enabled: true             #动态创建路由,开启动后注册中心通过serviceId调用
     nacos:
       discovery:
         server-addr: 10.165.12.109:8848
@@ -14,6 +14,5 @@ spring:
       config:
         file-extension: yaml
         server-addr: 10.165.12.109:8848
-        data-id: gateway-service-route
 server:
   port: 1111

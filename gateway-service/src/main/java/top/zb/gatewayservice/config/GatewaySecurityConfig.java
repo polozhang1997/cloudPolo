@@ -50,13 +50,11 @@ public class GatewaySecurityConfig {
         } catch (NacosException e) {
             e.printStackTrace();
         }
-
         ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchangeSpec = httpSecurity.authorizeExchange();
         //添加白名单api
         WhiteApiConfig.whiteApiList.forEach(
                 o -> {
                     authorizeExchangeSpec.pathMatchers(o).permitAll(); });
-
        httpSecurity
                 //资源共享
                 .cors().and()

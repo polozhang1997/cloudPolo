@@ -17,7 +17,6 @@ public class WhiteApiConfig {
 
     public static List<String> whiteIpList = new ArrayList<>();
 
-
     public static String DATA_ID;
 
     public static String GROUP;

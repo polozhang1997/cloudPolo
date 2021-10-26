@@ -1,11 +1,13 @@
 package top.zb.gatewayservice.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,5 +30,20 @@ public class JsonUtils {
         }
         return new ArrayList<T>();
     }
+
+    /**
+     * 将对象输出为字节数组
+     * @param value java实例
+     * @return byte[]
+     */
+    public static byte[] writeValueAsBytes(Object value) {
+        try {
+            return mapper.writeValueAsBytes(value);
+        } catch (JsonProcessingException e) {
+            log.info("", e);
+            return e.getMessage().getBytes(StandardCharsets.UTF_8);
+        }
+    }
+
 
 }

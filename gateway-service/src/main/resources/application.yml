@@ -6,3 +6,5 @@ polo:
   gateway:
     dateId: "gateway-service-route"
     group: "DEFAULT_GROUP"
+  security:
+    service: gateway

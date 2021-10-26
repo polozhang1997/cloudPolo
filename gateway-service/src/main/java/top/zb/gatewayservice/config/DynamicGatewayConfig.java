@@ -24,7 +24,6 @@ public class DynamicGatewayConfig {
 
     public static String GATEWAY_CONFIG_GROUP;
 
-
     public static String NACOS_SERVER_ADDR;
 
     @Value("${spring.cloud.nacos.discovery.server-addr}")
@@ -36,6 +35,7 @@ public class DynamicGatewayConfig {
     public void setGatewayConfigDataId(String gatewayConfigDataId){
         GATEWAY_CONFIG_DATA_ID = gatewayConfigDataId;
     }
+
     @Value("${polo.gateway.group}")
     public void setGatewayConfigGroup(String gatewayConfigGroup){
         GATEWAY_CONFIG_GROUP = gatewayConfigGroup;

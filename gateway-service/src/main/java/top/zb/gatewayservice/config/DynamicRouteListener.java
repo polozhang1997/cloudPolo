@@ -1,7 +1,5 @@
 package top.zb.gatewayservice.config;
 
-import com.alibaba.nacos.api.NacosFactory;
-import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
@@ -18,21 +16,18 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import top.zb.gatewayservice.util.JsonUtils;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.Executor;
+
+
 
 /**
  * 读取nacos网关配置发布，并监听网关配置文件动态发布
- * @Author: polo
- * @Date: 2021/10/22 9:40
- */
-
-/**
  * 动态路由：
  * 1.初始化ConfigService（当然也可以创建一个配置类然后再自动注入）
  * 2.通过初始化configService.getConfigAndSignListener(id,group,timeout,listener)拿到当前配置和监听器（@EventListener(ApplicationReadyEvent.class(事件源.class))）
  * 2.1。监听器监听nacos配置，并转化为RouteDefinition，并更新发布
  * 3.拿到当前当前文本路由进行发布更新
+ * @author polo
  */
 @Slf4j
 @ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
@@ -76,9 +71,7 @@ public class DynamicRouteListener {
             });
             log.info("现有路由：{}",route);
             //拿到目前的路由并发布
-            JsonUtils.toList(route,RouteDefinition.class).forEach( f ->{
-                updateDefinition(f);
-            });
+            JsonUtils.toList(route,RouteDefinition.class).forEach(this::updateDefinition);
         } catch (NacosException e) {
             log.warn("请在nacos编写dataId为：{}，group为：{}的相关配置文件",DynamicGatewayConfig.GATEWAY_CONFIG_DATA_ID,DynamicGatewayConfig.GATEWAY_CONFIG_GROUP);
         }

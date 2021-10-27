@@ -3,12 +3,14 @@ package top.poloo.usercenter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * @author polo
  */
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableFeignClients
 public class UserCenterApplication {
 
     public static void main(String[] args) {

@@ -32,7 +32,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
-        //白名单ip地址直接放行
+        //白名单api直接放行
         if (WhiteApiConfig.whiteIpList.contains(NetworkUtils.getIpAddress(request))){
             return chain.filter(exchange);
         }
@@ -41,13 +41,12 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         String authStr = request.getHeaders().getFirst(AuthConstant.AUTHORIZATION);
-        //未携带token,表示未登录
+        //未携带token
         if (StringUtils.isEmpty(authStr)){
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
             byte[] text = JsonUtils.writeValueAsBytes("GATEWAY ERROR 用户未认证，请尝试登出并重新登录！");
             return response.writeWith(Mono.just(response.bufferFactory().wrap(text)));
-            //return exchange.getResponse().setComplete();
         }
         return chain.filter(exchange);
     }

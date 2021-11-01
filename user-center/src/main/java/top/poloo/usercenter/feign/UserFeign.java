@@ -2,6 +2,7 @@ package top.poloo.usercenter.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import top.poloo.common.com.R;
 
 
@@ -22,7 +23,7 @@ public interface UserFeign {
      * @return - R
      */
     @PostMapping(BASE_URL+"/checkUserNameAndPassword")
-    R<?> checkUserNameAndPassword(String userName, String password);
+    R<?> login(@RequestParam("userName") String userName,@RequestParam("password") String password);
 
     /**
      * 添加用户
@@ -31,6 +32,6 @@ public interface UserFeign {
      * @return - R
      */
     @PostMapping(BASE_URL+"/addUser")
-    R<?> addUser(String userName, String password);
+    R<?> addUser(@RequestParam("userName")String userName,@RequestParam("password") String password);
 
 }

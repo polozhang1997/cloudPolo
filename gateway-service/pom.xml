@@ -11,6 +11,7 @@
     <artifactId>gateway-service</artifactId>
     <name>gateway-service</name>
     <description>gateway-service</description>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!--webflux反应式框架-->
@@ -64,6 +65,26 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>top.poloo</groupId>
+            <artifactId>user-center</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus-boot-starter</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 
 
     </dependencies>

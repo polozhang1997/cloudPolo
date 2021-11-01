@@ -5,11 +5,16 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
 
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * @Author: polo
@@ -18,7 +23,7 @@ import java.util.Properties;
 @Configuration
 @Slf4j
 public class DynamicGatewayConfig {
-    public static final long DEFAULT_TIMEOUT = 30000;
+    //public static final long DEFAULT_TIMEOUT = 30000;
 
     public static String GATEWAY_CONFIG_DATA_ID;
 
@@ -43,7 +48,7 @@ public class DynamicGatewayConfig {
 
     /**
      * 初始化configService
-     * @return
+     * @return - ConfigServiceBean
      */
     @Bean
     public ConfigService initConfigService(){
@@ -55,6 +60,11 @@ public class DynamicGatewayConfig {
             log.error("【ConfigService】初始化失败");
             return null;
         }
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
+        return new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
     }
 
 

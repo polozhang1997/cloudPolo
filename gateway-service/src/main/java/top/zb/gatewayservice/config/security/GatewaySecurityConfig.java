@@ -1,4 +1,4 @@
-package top.zb.gatewayservice.config;
+package top.zb.gatewayservice.config.security;
 
 import cn.hutool.core.convert.Convert;
 import com.alibaba.fastjson.JSONObject;
@@ -10,18 +10,23 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
+import top.zb.gatewayservice.config.White;
+import top.zb.gatewayservice.config.WhiteApiConfig;
+import top.zb.gatewayservice.config.matcher.JwtMatcher;
 import top.zb.gatewayservice.constant.AuthConstant;
 import top.zb.gatewayservice.util.JsonUtils;
 
 
+
 /**
+ * security核心配置
  * @Author: polo
  * @Date: 2021/10/26 10:26
  */
@@ -29,43 +34,40 @@ import top.zb.gatewayservice.util.JsonUtils;
 @Configuration
 @ConditionalOnProperty(value = "polo.security.service",havingValue = "gateway")
 @EnableWebFluxSecurity
-@EnableReactiveMethodSecurity
+//@EnableReactiveMethodSecurity  //全局方法安全管理
 public class GatewaySecurityConfig {
 
     @Autowired
     private ConfigService configService;
 
 
-
-
-
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity){
 
-        //读取白名单api，如果nacos没有，后续修改也不能注入到security
+        //读取白名单api，如果nacos没有，后续修改也不能注入到security，需要重启应用
         try {
             String config = configService.getConfig(WhiteApiConfig.DATA_ID, WhiteApiConfig.GROUP, 100000);
             White white = JSONObject.parseObject(config, White.class);
             WhiteApiConfig.whiteApiList = white.getWhiteApiListNacos();
             log.info("security白名单api有：{}", Convert.toStr(WhiteApiConfig.whiteApiList));
         } catch (NacosException e) {
-            e.printStackTrace();
+           log.error("读取naocs无需认证api出错！");
         }
         ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchangeSpec = httpSecurity.authorizeExchange();
-        //添加白名单api
-        WhiteApiConfig.whiteApiList.forEach(
-                o -> authorizeExchangeSpec.pathMatchers(o).permitAll());
+        WhiteApiConfig.whiteApiList.forEach(o -> authorizeExchangeSpec.pathMatchers(o).permitAll());
        httpSecurity
                 //资源共享
                 .cors().and()
-                //防止post异常
+                //跨站
                 .csrf().disable()
                 //取消登录页面
                 .formLogin().disable()
                 //取消base加密
                 .httpBasic().disable()
-             //  .authorizeExchange().pathMatchers("").permitAll()
-            //   .and()
+               .authorizeExchange()
+               .pathMatchers(HttpMethod.OPTIONS).permitAll()
+               .matchers(new JwtMatcher()).permitAll()
+               .and()
                 //权限不够异常拦截处理
                 .exceptionHandling().accessDeniedHandler((exchange,e) ->{
                     log.info("403 Unauthorized");
@@ -95,4 +97,6 @@ public class GatewaySecurityConfig {
        return httpSecurity.build();
 
     }
+
+
 }

@@ -14,7 +14,6 @@
   <modules>
     <module>gateway-service</module>
     <module>user-center</module>
-    <module>auth-service</module>
     <module>common</module>
 
   </modules>

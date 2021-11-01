@@ -15,7 +15,7 @@ public interface UserBaseInfoService extends IService<UserBaseInfo> {
      * @param password - 密码
      * @return
      */
-    R addUser(String userName, String password);
+    R<?> addUser(String userName, String password);
 
     /**
      * 验证用户名和密码
@@ -23,5 +23,7 @@ public interface UserBaseInfoService extends IService<UserBaseInfo> {
      * @param password - 密码
      * @return
      */
-    R checkUserNameAndPassword(String userName,String password);
+    R<?> checkUserNameAndPassword(String userName,String password);
+
+
 }

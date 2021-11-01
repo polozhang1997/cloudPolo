@@ -1,6 +1,7 @@
 package top.poloo.usercenter.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,16 +13,18 @@ import top.poloo.usercenter.service.UserBaseInfoService;
  * @Author: polo
  * @Date: 2021/10/21 16:42
  */
+
 @RestController
 @RequestMapping(value = UserFeign.BASE_URL)
 public class UserController implements UserFeign {
+
     @Autowired
     UserBaseInfoService baseInfoService;
 
 
     @Override
     @PostMapping("/checkUserNameAndPassword")
-    public R<?> checkUserNameAndPassword(String userName, String password) {
+    public R<?> login(String userName, String password) {
         return baseInfoService.checkUserNameAndPassword(userName,password);
     }
 
@@ -30,4 +33,10 @@ public class UserController implements UserFeign {
     public R<?> addUser(String userName, String password) {
         return baseInfoService.addUser(userName,password);
     }
+    @GetMapping("/authTest")
+    public String authTest(){
+
+        return "鉴权成功，成功访问";
+    }
+
 }

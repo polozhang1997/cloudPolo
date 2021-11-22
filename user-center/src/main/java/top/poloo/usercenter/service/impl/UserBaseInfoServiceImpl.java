@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.poloo.common.com.AuthUser;
 import top.poloo.common.com.R;
-import top.poloo.common.constant.Rcode;
 import top.poloo.common.constant.TokenConstant;
 import top.poloo.common.util.JwtUtils;
 import top.poloo.usercenter.entity.UserBaseInfo;
@@ -32,39 +31,37 @@ public class UserBaseInfoServiceImpl extends ServiceImpl<UserBaseInfoMapper, Use
 
 
     @Override
-    public R<?> addUser(String userName, String password) {
+    public R addUser(String userName, String password) {
 
         String s = String.valueOf(HashUtil.mixHash(password));
         UserBaseInfo userBaseInfo = this.baseMapper.selectOne(Wrappers.<UserBaseInfo>query().lambda().eq(UserBaseInfo::getUserName, userName));
         if (userBaseInfo != null){
             log.warn("添加已存在用户:{}",userName);
-            return R.feignOperation(Rcode.FAIL_CODE,true,"用户已存在","");
+            return R.failed("用户已存在");
         }
         int insert = this.baseMapper.insert(new UserBaseInfo().setUserName(userName).setPassword(s));
-        return insert > 0 ? R.feignOperation(Rcode.SUCCESS_CODE,true,"保存成功","")
-                          : R.feignOperation(Rcode.FAIL_CODE,false,"数据操作失败","");
+        return insert > 0 ? R.success("添加成功")
+                          : R.failed("数据操作失败");
     }
 
     @Override
-    public R<?> checkUserNameAndPassword(String userName, String password) {
+    public R checkUserNameAndPassword(String userName, String password) {
         UserBaseInfo one = this.getOne(Wrappers.<UserBaseInfo>query().lambda().eq(UserBaseInfo::getUserName, userName));
         //  long hashPassword = HashUtil.mixHash(password);
         if (one == null){
-            return R.feignOperation(Rcode.FAIL_CODE,true,"账户不存在","");
+            return R.failed("账户不存在");
         }
         //生成token
         Map<String,Object> claims  = new HashMap<>(16);
         claims.put("userName",one.getUserName());
         claims.put("neverMind","poloo");
         String token = JwtUtils.generateToken(claims, one.getUserName(), TokenConstant.OUT_TIME);
-
-
         if (one.getPassword().equals(String.valueOf(password))){
             AuthUser authUser = new AuthUser().setUserId(one.getId().toString()).setNickName(one.getUserName()).setJwtToken(token)
                     .setOutTime(TokenConstant.OUT_TIME);
-            return R.feignOperation(Rcode.SUCCESS_CODE,true,"密码正确",authUser);
+            return R.success(authUser);
         }else {
-            return R.feignOperation(Rcode.FAIL_CODE,true,"密码不正确","");
+            return R.failed("密码不正确");
         }
     }
 

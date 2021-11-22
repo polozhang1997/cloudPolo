@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 暂且未用
  * @Author: polo
  * @Date: 2021/10/26 17:08
  */
@@ -54,7 +54,7 @@ public class WhiteApiMatcher  implements ServerWebExchangeMatcher {
 
     /**
      * 获取nacos白名单的列表
-     * @return
+     * @return List<String>
      */
     private List<String> getWhiteApiListFromNacos(){
 

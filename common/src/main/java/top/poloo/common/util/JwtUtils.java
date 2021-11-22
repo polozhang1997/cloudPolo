@@ -6,7 +6,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import top.poloo.common.constant.TokenConstant;
-
 import java.util.Date;
 import java.util.Map;
 

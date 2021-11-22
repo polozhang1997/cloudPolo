@@ -7,18 +7,19 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebSession;
-import reactor.core.publisher.Mono;
 import top.poloo.common.com.R;
-import top.poloo.common.constant.Rcode;
+import top.poloo.common.com.Rcode;
 import top.poloo.usercenter.feign.UserFeign;
 import top.poloo.common.com.AuthUser;
+import top.zb.gatewayservice.entity.Login;
+
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,21 +36,19 @@ public class AuthController {
     ServerSecurityContextRepository serverSecurityContextRepository = new WebSessionServerSecurityContextRepository();
 
 
-    //登录验证
+
     @PostMapping
-    public Map<String,Object> login(ServerWebExchange exchange,
-                      WebSession session,
-                      String userName,
-                      String password){
-        R<?> login = userFeign.login(userName, password);
-        if (Rcode.FAIL_CODE.equals(login.getCode())){
-            Map<String,Object> map = new HashMap<>();
-            map.put("code",login.getCode());
-            map.put("message", login.getMsg());
-            return map;
+    public R login(ServerWebExchange exchange,
+                   WebSession session,
+                   Login loginBody){
+        String password = loginBody.getPassword();
+        String userName = loginBody.getUserName();
+        R login = userFeign.login(userName, password);
+        if (Rcode.FAILED.getCode().equals(login.getCode())){
+            return login;
         }
-        //账户密码验证成功
-        if (Rcode.SUCCESS_CODE.equals(login.getCode())){
+
+        if (Rcode.SUCCESS.getCode().equals(login.getCode())){
             Object data = login.getData();
             AuthUser authUser = JSONObject.parseObject(JSONObject.toJSONString(data), AuthUser.class);
             //认证  //Authentication子类
@@ -59,11 +58,11 @@ public class AuthController {
             Map<String,Object> map = new HashMap<>(16);
             map.put("token",authUser.getJwtToken());
             map.put("sessionId",session.getId());
-            return  map;
-
+            return  R.success(map);
         }
         return null;
 
     }
+
 
 }

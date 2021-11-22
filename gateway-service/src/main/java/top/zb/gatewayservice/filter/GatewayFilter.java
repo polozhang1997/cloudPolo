@@ -32,15 +32,12 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
-
-        //白名单路由直接放行
         UserUtils.currentUser()
                 .switchIfEmpty(Mono.defer(() -> {
                     if (WhiteApiConfig.whiteIpList.contains(NetworkUtils.getIpAddress(request))) {
                         return Mono.just(new AuthUser().setType(AuthConstant.WHITE_TYPE));
                     }
                     return Mono.empty();
-
                 }))
                 .switchIfEmpty(Mono.defer(() -> {
                     if (WhiteApiConfig.whiteApiList.contains(request.getURI().getPath())) {
@@ -60,8 +57,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
                     }
                     return chain.filter(exchange);
                 });
-        return chain.filter(exchange);
-
+       return  chain.filter(exchange);
     }
 
     @Override

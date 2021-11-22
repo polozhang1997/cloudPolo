@@ -1,6 +1,8 @@
 package top.poloo.common.com;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.io.Serializable;
 
@@ -9,27 +11,22 @@ import java.io.Serializable;
  * @Date: 2021/10/27 16:08
  */
 @Data
-public class R<T>  implements Serializable {
+@Accessors(chain = true)
+public class R  implements Serializable {
 
     private static final long serialVersionUID = 3490211779130241508L;
     private Integer code;
     private String msg;
-    private T data;
-    private Boolean operation;
+    private Object data;
 
-
-
-    public R() {
+    public static  R success(Object data){
+        return new R().setCode(Rcode.SUCCESS.getCode()).setMsg(Rcode.SUCCESS.getMsg()).setData(data);
     }
-
-    public static  <T> R<T>  feignOperation(Integer code,Boolean operation,String message,T t){
-        R<T> r = new R();
-        r.setCode(code);
-        r.setOperation(operation);
-        r.setMsg(message);
-        r.setData(t);
-        return r;
+    public static R success(String msg){
+        return new R().setCode(Rcode.SUCCESS.getCode()).setMsg(msg).setData(null);
     }
-
+    public static R failed(String msg){
+        return new R().setCode(Rcode.FAILED.getCode()).setMsg(msg).setData(null);
+    }
 
 }

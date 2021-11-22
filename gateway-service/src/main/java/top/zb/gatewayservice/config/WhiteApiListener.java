@@ -42,7 +42,6 @@ public class WhiteApiListener {
                     WhiteApiConfig.whiteIpList = white.getWhiteIpListNacos();
                     log.info("更新后的白名单Route有：{}",Convert.toStr(WhiteApiConfig.whiteApiList));
                     log.info("更新后的白名单Ip有：{}",Convert.toStr(WhiteApiConfig.whiteIpList));
-
                 }
             });
             White white = JSONObject.parseObject(data, White.class);

@@ -23,7 +23,7 @@ public interface UserFeign {
      * @return - R
      */
     @PostMapping(BASE_URL+"/checkUserNameAndPassword")
-    R<?> login(@RequestParam("userName") String userName,@RequestParam("password") String password);
+    R login(@RequestParam("userName") String userName,@RequestParam("password") String password);
 
     /**
      * 添加用户
@@ -32,6 +32,6 @@ public interface UserFeign {
      * @return - R
      */
     @PostMapping(BASE_URL+"/addUser")
-    R<?> addUser(@RequestParam("userName")String userName,@RequestParam("password") String password);
+    R addUser(@RequestParam("userName")String userName,@RequestParam("password") String password);
 
 }

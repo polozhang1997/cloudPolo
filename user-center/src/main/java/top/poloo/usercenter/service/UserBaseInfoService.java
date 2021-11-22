@@ -13,17 +13,17 @@ public interface UserBaseInfoService extends IService<UserBaseInfo> {
      * 添加用户
      * @param userName - 用户名
      * @param password - 密码
-     * @return
+     * @return R
      */
-    R<?> addUser(String userName, String password);
+    R addUser(String userName, String password);
 
     /**
      * 验证用户名和密码
      * @param userName - 用户名
      * @param password - 密码
-     * @return
+     * @return R
      */
-    R<?> checkUserNameAndPassword(String userName,String password);
+    R checkUserNameAndPassword(String userName,String password);
 
 
 }

@@ -24,18 +24,18 @@ public class UserController implements UserFeign {
 
     @Override
     @PostMapping("/checkUserNameAndPassword")
-    public R<?> login(String userName, String password) {
+    public R login(String userName, String password) {
         return baseInfoService.checkUserNameAndPassword(userName,password);
     }
 
     @Override
     @PostMapping("/addUser")
-    public R<?> addUser(String userName, String password) {
+    public R addUser(String userName, String password) {
         return baseInfoService.addUser(userName,password);
     }
+
     @GetMapping("/authTest")
     public String authTest(){
-
         return "鉴权成功，成功访问";
     }
 

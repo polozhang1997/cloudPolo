@@ -1,5 +1,6 @@
 package top.zb.gatewayservice.config.matcher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.util.StringUtils;
@@ -14,6 +15,7 @@ import top.zb.gatewayservice.util.TokenUtils;
  * @Author: polo
  * @Date: 2021/11/1 16:00
  */
+@Slf4j
 public class JwtMatcher implements ServerWebExchangeMatcher {
     @Override
     public Mono<MatchResult> matches(ServerWebExchange serverWebExchange) {
@@ -25,6 +27,7 @@ public class JwtMatcher implements ServerWebExchangeMatcher {
         if (TokenUtils.isJwtTokenExpired(StringUtils.delete(token,AuthConstant.BEARER))){
             return MatchResult.notMatch();
         }
+        log.info("token为：{}",token);
         return MatchResult.match();
     }
 }

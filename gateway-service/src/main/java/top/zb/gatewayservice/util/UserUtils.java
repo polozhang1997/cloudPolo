@@ -27,9 +27,14 @@ public class UserUtils {
      * @return AuthUser
      */
     public static Mono<AuthUser> currentUser() {
-        return currentAuthentication()
+        Mono<AuthUser> cast = currentAuthentication()
                 .map(Authentication::getPrincipal)
                 .cast(AuthUser.class);
+        cast.map(o ->{
+            System.out.println(o.getJwtToken());
+            return o;
+        });
+        return cast;
     }
 
 
